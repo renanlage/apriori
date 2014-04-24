@@ -1,0 +1,55 @@
+import itertools
+import collections
+
+def loadFile(filename):
+  f = open(filename, "r")
+  data = []
+  f.readline()
+  n_trans = 0
+  for line in f:
+    n_trans += 1
+    data.append(line.strip().split(','))
+  f.close()
+  return data, n_trans
+
+def apriori(data, n_trans, sup, conf):
+  # generating frequent itemsets of size 1
+  frequencies = firstItemset(data)
+  for item in frequencies.keys():
+    if frequencies[item]/float(n_trans) < sup:
+      del frequencies[item]
+
+  # generating candidate set of size k+1
+  k = 2
+  """while (len(frequencies) != 0):
+    combinations = generateItemset(frequencies)
+    k++
+  """
+  return frequencies
+
+
+def firstItemset(data):
+  frequencies = collections.OrderedDict()
+  for transaction in data:
+    for item in transaction:
+      if (item, ) in frequencies:
+        frequencies[(item,)] += 1
+      else:
+        frequencies[(item,)] = 1
+  return frequencies
+
+def generateItemset(frequencies):
+  combination = {}
+  keys = frequencies.keys()
+  for i in range(len(keys)):
+    for j in range(i, len(keys)):
+      return
+  return
+
+
+  
+
+data, n_trans = loadFile("exemplo.csv")
+print apriori(data, n_trans, 0.5, 0.5)
+print tuple(itertools.combinations([1,2,3], 2))
+  
