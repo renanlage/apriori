@@ -1,0 +1,66 @@
+=== Run information ===
+
+Scheme:       weka.associations.Apriori -N 20 -T 0 -C 0.9 -D 0.05 -U 1.0 -M 0.4 -S -1.0 -c -1
+Relation:     mod_input-weka.filters.unsupervised.attribute.Remove-R1-4
+Instances:    14107
+Attributes:   18
+              team
+              gp
+              minutes
+              pts
+              oreb
+              dreb
+              reb
+              asts
+              stl
+              blk
+              pf
+              fga
+              fgm
+              fta
+              ftm
+              tpa
+              tpm
+              allstar
+=== Associator model (full training set) ===
+
+
+Apriori
+=======
+
+Minimum support: 0.4 (5643 instances)
+Minimum metric <confidence>: 0.9
+Number of cycles performed: 12
+
+Generated sets of large itemsets:
+
+Size of set of large itemsets L(1): 15
+
+Size of set of large itemsets L(2): 19
+
+Size of set of large itemsets L(3): 7
+
+Size of set of large itemsets L(4): 1
+
+Best rules found:
+
+ 1. pts=pts-mr 5914 ==> allstar=NO 5909    <conf:(1)> lift:(1.05) lev:(0.02) [298] conv:(50.59)
+ 2. fgm=fgm-mr 5862 ==> allstar=NO 5857    <conf:(1)> lift:(1.05) lev:(0.02) [295] conv:(50.14)
+ 3. pts=pts-mr fgm=fgm-mr 5771 ==> allstar=NO 5766    <conf:(1)> lift:(1.05) lev:(0.02) [291] conv:(49.36)
+ 4. ftm=ftm-mr 6364 ==> allstar=NO 6358    <conf:(1)> lift:(1.05) lev:(0.02) [320] conv:(46.66)
+ 5. fta=fta-mr 6152 ==> allstar=NO 6146    <conf:(1)> lift:(1.05) lev:(0.02) [309] conv:(45.1)
+ 6. fta=fta-mr ftm=ftm-mr 6035 ==> allstar=NO 6029    <conf:(1)> lift:(1.05) lev:(0.02) [303] conv:(44.25)
+ 7. fga=fga-mr 5718 ==> allstar=NO 5712    <conf:(1)> lift:(1.05) lev:(0.02) [287] conv:(41.92)
+ 8. stl=stl-mr 5676 ==> allstar=NO 5669    <conf:(1)> lift:(1.05) lev:(0.02) [284] conv:(36.41)
+ 9. reb=reb-mr 5717 ==> allstar=NO 5707    <conf:(1)> lift:(1.05) lev:(0.02) [283] conv:(26.67)
+10. dreb=dreb-mr 5697 ==> allstar=NO 5687    <conf:(1)> lift:(1.05) lev:(0.02) [282] conv:(26.58)
+11. asts=asts-mr 6614 ==> allstar=NO 6602    <conf:(1)> lift:(1.05) lev:(0.02) [327] conv:(26.11)
+12. asts=asts-mr tpm=tpm-mr 5924 ==> allstar=NO 5913    <conf:(1)> lift:(1.05) lev:(0.02) [293] conv:(25.34)
+13. asts=asts-mr tpa=tpa-mr 5853 ==> allstar=NO 5842    <conf:(1)> lift:(1.05) lev:(0.02) [289] conv:(25.03)
+14. asts=asts-mr tpa=tpa-mr tpm=tpm-mr 5831 ==> allstar=NO 5820    <conf:(1)> lift:(1.05) lev:(0.02) [288] conv:(24.94)
+15. oreb=oreb-mr blk=blk-mr 5729 ==> allstar=NO 5714    <conf:(1)> lift:(1.05) lev:(0.02) [279] conv:(18.38)
+16. asts=asts-mr tpa=tpa-mr 5853 ==> tpm=tpm-mr 5831    <conf:(1)> lift:(1.46) lev:(0.13) [1847] conv:(81.27)
+17. asts=asts-mr tpa=tpa-mr allstar=NO 5842 ==> tpm=tpm-mr 5820    <conf:(1)> lift:(1.46) lev:(0.13) [1843] conv:(81.11)
+18. oreb=oreb-mr 6258 ==> allstar=NO 6232    <conf:(1)> lift:(1.05) lev:(0.02) [295] conv:(11.9)
+19. tpa=tpa-mr allstar=NO 8865 ==> tpm=tpm-mr 8825    <conf:(1)> lift:(1.46) lev:(0.2) [2790] conv:(69.05)
+20. tpa=tpa-mr 9166 ==> tpm=tpm-mr 9124    <conf:(1)> lift:(1.46) lev:(0.2) [2885] conv:(68.07)

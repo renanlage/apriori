@@ -1,80 +1,156 @@
-import collections
-import copy
+import sys
 
-"""Reads file and put it on an array of arrays structure"""
-def loadFile(filename):
-  f = open(filename, "r")
-  data = []
-  # Discard first line
-  f.readline()
-  # Append each line to array, splitting the line by comma
-  for line in f:
-    data.append(line.strip().split(','))
-  # Close file and return data structure
-  f.close()
-  return data
-
-"""Apply the apriori algorithm to a supplied dataset with the given support and confidence"""
-def apriori(data, sup, conf):
-  # Generating all itemsets of size 1
-  frequencies = firstItemset(data)
-  # Deleting not frequent items based on the support
-  for item in frequencies.keys():
-    if frequencies[item]/float(len(data)) < sup:
-      del frequencies[item]
-
-  # generating candidate set of size k+1
-  k = 2
-  itemset = generateItemset(frequencies)
-  frequencies = {} 
-  for item in itemset:
-    for transaction in data:
-      if in_transaction(transaction, item):
-        if item in frequencies.keys():
-          frequencies[item] += 1
-        else:
-          # initialize if item wasn't already in the dict
-          frequencies[item] = 1
-  
-  return frequencies
-
-def in_transaction(transaction, item):
-  return all(x in transaction for x in item)
+from itertools import chain, combinations
+from collections import defaultdict
+from optparse import OptionParser
 
 
-"""Generate first itemset of size 1 and the frequencies for each item"""
-def firstItemset(data):
-  # Store the item and its frequency in an ordered dict structure
-  frequencies = collections.OrderedDict()
-  # Count for each item in a transaction its frequency
-  for transaction in data:
-    for item in transaction:
-	  # a list of one element is used because it will be better 
-	  # when dealing with itemsets of a larger size
-      if (item,) in frequencies:
-        frequencies[(item,)] += 1
-      else:
-	    # initialize if item wasn't already in the dict
-        frequencies[(item,)] = 1
-  return frequencies
+def getItemsWithMinSupport(itemSet, transactionList, minSup, freqSet):
+        """Calculates the support for items in the itemSet and returns a subset
+       of the itemSet each of whose elements satisfies the minimum support"""
+        _itemSet = set()
+        localSet = defaultdict(int)
+
+        for item in itemSet:
+                for transaction in transactionList:
+                        if item.issubset(transaction):
+                                freqSet[item] += 1
+                                localSet[item] += 1
+
+        for item, count in localSet.items():
+                support = float(count)/len(transactionList)
+
+                if support >= minSup:
+                        _itemSet.add(item)
+
+        return _itemSet
 
 
-"""Generate a new itemset based on a previous itemset where the 
-new itemset has size of the previous + 1 and the items are 
-combinations of frequent items in the previous itemset"""
-def generateItemset(frequencies):
-  # Get the ordered keys from the frequencies dictionary
-  itemset = frequencies.keys()
-  new_itemset = []
-  for i in xrange(len(itemset)):
-    for j in xrange(i + 1, len(itemset)):
-      if itemset[i][:-1] == itemset[j][:-1] and itemset[i][-1] < itemset[j][-1]:
-	    candidate = itemset[i] + (itemset[j][-1],)
-	    new_itemset.append(candidate)
-      else:
-        next
-  return new_itemset
+def joinSet(itemSet, length):
+        """Join a set with itself and returns the n-element itemsets"""
+        return set([i.union(j) for i in itemSet for j in itemSet if len(i.union(j)) == length])
 
-data = [[1,3,4],[2,3,5],[1,2,3,5],[2,5]]
-#loadFile("exemplo.csv")
-print apriori(data, 0.5, 0.5)  
+def getSubsets(arr):
+    """Returns non empty subsets of arr"""
+    return chain(*[combinations(arr, i + 1) for i, a in enumerate(arr)])
+
+
+def getItemSetTransactionList(data_iterator):
+    transactionList = list()
+    itemSet = set()
+    for record in data_iterator:
+        transaction = frozenset(record)
+        transactionList.append(transaction)
+        for item in transaction:
+            itemSet.add(frozenset([item]))              # Generate 1-itemSets
+    return itemSet, transactionList
+
+
+def runApriori(data_iter, minSupport, minConfidence):
+    """
+    run the apriori algorithm. data_iter is a record iterator
+    Return both:
+     - items (tuple, support)
+     - rules ((pretuple, posttuple), confidence)
+    """
+    itemSet, transactionList = getItemSetTransactionList(data_iter)
+
+    freqSet = defaultdict(int)
+    largeSet = dict()
+    # Global dictionary which stores (key=n-itemSets,value=support)
+    # which satisfy minSupport
+
+    assocRules = dict()
+    # Dictionary which stores Association Rules
+
+    oneCSet = getItemsWithMinSupport(itemSet,
+                                        transactionList,
+                                        minSupport,
+                                        freqSet)
+
+    currentLSet = oneCSet
+    k = 2
+    while(currentLSet != set([])):
+        largeSet[k-1] = currentLSet
+        currentLSet = joinSet(currentLSet, k)
+        currentCSet = getItemsWithMinSupport(currentLSet,
+                                                transactionList,
+                                                minSupport,
+                                                freqSet)
+        currentLSet = currentCSet
+        k = k + 1
+
+    def getSupport(item):
+            """local function which Returns the support of an item"""
+            return float(freqSet[item])/len(transactionList)
+
+    toRetItems = []
+    for key, value in largeSet.items():
+        toRetItems.extend([(tuple(item), getSupport(item))
+                           for item in value])
+
+    toRetRules = []
+    for key, value in largeSet.items()[1:]:
+        for item in value:
+            _subsets = map(frozenset, [x for x in getSubsets(item)])
+            for element in _subsets:
+                remain = item.difference(element)
+                if len(remain) > 0:
+                    confidence = getSupport(item)/getSupport(element)
+                    if confidence >= minConfidence:
+                        toRetRules.append(((tuple(element), tuple(remain)),
+                                           confidence))
+    return toRetItems, toRetRules
+    
+
+def writeResults(items, rules):
+    output = open("apriori_output.txt", "w")
+    for rule, confidence in rules:
+        pre, post = rule
+        output.write("Rule: %s ==> %s , %.3f\n" % (str(pre), str(post), confidence))
+    output.close()
+
+def dataFromFile(fname):
+        """Function which reads from the file and yields a generator"""
+        file_iter = open(fname, 'rU')
+        for line in file_iter:
+                line = line.strip().rstrip(',')                         # Remove trailing comma
+                record = frozenset(line.split(','))
+                yield record
+
+
+if __name__ == "__main__":
+
+    optparser = OptionParser()
+    optparser.add_option('-f', '--inputFile',
+                         dest='input',
+                         help='filename containing csv',
+                         default=None)
+    optparser.add_option('-s', '--minSupport',
+                         dest='minS',
+                         help='minimum support value',
+                         default=0.15,
+                         type='float')
+    optparser.add_option('-c', '--minConfidence',
+                         dest='minC',
+                         help='minimum confidence value',
+                         default=0.6,
+                         type='float')
+
+    (options, args) = optparser.parse_args()
+
+    inFile = None
+    if options.input is None:
+            inFile = sys.stdin
+    elif options.input is not None:
+            inFile = dataFromFile(options.input)
+    else:
+            print 'No dataset filename specified, system with exit\n'
+            sys.exit('System will exit')
+
+    minSupport = options.minS
+    minConfidence = options.minC
+
+    items, rules = runApriori(inFile, minSupport, minConfidence)
+
+    writeResults(items, rules)

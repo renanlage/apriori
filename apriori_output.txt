@@ -1,0 +1,47 @@
+Rule: ('blk-mr',) ==> ('NO',) , 0.990
+Rule: ('tpm-mr',) ==> ('tpa-mr',) , 0.950
+Rule: ('tpa-mr',) ==> ('tpm-mr',) , 0.995
+Rule: ('ftm-mr',) ==> ('NO',) , 0.999
+Rule: ('stl-mr',) ==> ('NO',) , 0.999
+Rule: ('fgm-mr',) ==> ('NO',) , 0.999
+Rule: ('tpm-mr',) ==> ('NO',) , 0.965
+Rule: ('ftm-mr',) ==> ('fta-mr',) , 0.948
+Rule: ('fta-mr',) ==> ('ftm-mr',) , 0.981
+Rule: ('fga-mr',) ==> ('NO',) , 0.999
+Rule: ('tpa-mr',) ==> ('NO',) , 0.967
+Rule: ('oreb-mr',) ==> ('blk-mr',) , 0.915
+Rule: ('reb-mr',) ==> ('NO',) , 0.998
+Rule: ('dreb-mr',) ==> ('NO',) , 0.998
+Rule: ('pts-mr',) ==> ('NO',) , 0.999
+Rule: ('oreb-mr',) ==> ('NO',) , 0.996
+Rule: ('fgm-mr',) ==> ('pts-mr',) , 0.984
+Rule: ('pts-mr',) ==> ('fgm-mr',) , 0.976
+Rule: ('fta-mr',) ==> ('NO',) , 0.999
+Rule: ('asts-mr',) ==> ('NO',) , 0.998
+Rule: ('oreb-mr',) ==> ('blk-mr', 'NO') , 0.913
+Rule: ('oreb-mr', 'blk-mr') ==> ('NO',) , 0.997
+Rule: ('oreb-mr', 'NO') ==> ('blk-mr',) , 0.917
+Rule: ('tpm-mr', 'asts-mr') ==> ('NO',) , 0.998
+Rule: ('tpm-mr',) ==> ('tpa-mr', 'NO') , 0.919
+Rule: ('tpa-mr',) ==> ('tpm-mr', 'NO') , 0.963
+Rule: ('tpm-mr', 'tpa-mr') ==> ('NO',) , 0.967
+Rule: ('tpm-mr', 'NO') ==> ('tpa-mr',) , 0.952
+Rule: ('tpa-mr', 'NO') ==> ('tpm-mr',) , 0.995
+Rule: ('asts-mr', 'tpa-mr') ==> ('NO',) , 0.998
+Rule: ('tpm-mr', 'asts-mr') ==> ('tpa-mr',) , 0.984
+Rule: ('asts-mr', 'tpa-mr') ==> ('tpm-mr',) , 0.996
+Rule: ('fta-mr',) ==> ('ftm-mr', 'NO') , 0.980
+Rule: ('ftm-mr',) ==> ('NO', 'fta-mr') , 0.947
+Rule: ('ftm-mr', 'fta-mr') ==> ('NO',) , 0.999
+Rule: ('NO', 'fta-mr') ==> ('ftm-mr',) , 0.981
+Rule: ('ftm-mr', 'NO') ==> ('fta-mr',) , 0.948
+Rule: ('fgm-mr',) ==> ('pts-mr', 'NO') , 0.984
+Rule: ('pts-mr',) ==> ('fgm-mr', 'NO') , 0.975
+Rule: ('fgm-mr', 'pts-mr') ==> ('NO',) , 0.999
+Rule: ('fgm-mr', 'NO') ==> ('pts-mr',) , 0.984
+Rule: ('pts-mr', 'NO') ==> ('fgm-mr',) , 0.976
+Rule: ('asts-mr', 'tpa-mr') ==> ('tpm-mr', 'NO') , 0.994
+Rule: ('tpm-mr', 'asts-mr') ==> ('tpa-mr', 'NO') , 0.982
+Rule: ('asts-mr', 'tpa-mr', 'NO') ==> ('tpm-mr',) , 0.996
+Rule: ('tpm-mr', 'asts-mr', 'tpa-mr') ==> ('NO',) , 0.998
+Rule: ('tpm-mr', 'asts-mr', 'NO') ==> ('tpa-mr',) , 0.984
